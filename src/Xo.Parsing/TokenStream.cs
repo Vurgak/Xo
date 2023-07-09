@@ -40,19 +40,36 @@ public class TokenStream
     }
 
     /// <summary>
-    /// Advances the stream only if the next token is of given kind.
+    /// Advances the stream only if the next token is of the given kind.
     /// </summary>
-    public bool Consume(TokenKind expectedKind, out Token? token)
+    public bool Consume(TokenKind expectedKind, out Token token)
     {
         var nextToken = Peek();
         if (expectedKind != TokenKind.EndOfFile && nextToken.Kind == expectedKind)
         {
             token = nextToken;
-            _lexer.NextToken();
+            _tokenCache = null;
             return true;
         }
 
-        token = null;
+        token = default;
+        return false;
+    }
+
+    /// <summary>
+    /// Advances the stream only if the next token is one of given kinds.
+    /// </summary>
+    public bool Consume(IEnumerable<TokenKind> expectedKinds, out Token token)
+    {
+        var nextToken = Peek();
+        if (nextToken.Kind != TokenKind.EndOfFile && expectedKinds.Contains(nextToken.Kind))
+        {
+            token = nextToken;
+            _tokenCache = null;
+            return true;
+        }
+
+        token = default;
         return false;
     }
 }

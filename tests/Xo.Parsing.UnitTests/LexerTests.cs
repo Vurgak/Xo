@@ -12,8 +12,8 @@ public class LexerTests
 
         var actualToken = lexer.NextToken();
 
-        Assert.Equal(expectedStart, actualToken.Start);
-        Assert.Equal(expectedEnd, actualToken.End);
+        Assert.Equal(expectedStart, actualToken.Span.Start);
+        Assert.Equal(expectedEnd, actualToken.Span.End);
     }
 
     [Theory]

@@ -6,12 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <ItemGroup>
-        <InternalsVisibleTo Include="$(AssemblyName).UnitTests" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Xo.Ast\Xo.Ast.csproj" />
-    </ItemGroup>
-
 </Project>

@@ -1,3 +1,5 @@
-﻿namespace Xo.Parsing;
+﻿using Xo.SourceCode;
 
-public readonly record struct Token(TokenKind Kind, int Start, int End);
+namespace Xo.Parsing;
+
+public readonly record struct Token(TokenKind Kind, SourceSpan Span);

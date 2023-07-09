@@ -1,4 +1,6 @@
-﻿namespace Xo.Parsing;
+﻿using Xo.SourceCode;
+
+namespace Xo.Parsing;
 
 internal class Lexer
 {
@@ -11,7 +13,7 @@ internal class Lexer
     public Lexer(string sourceCode)
     {
         _sourceCode = sourceCode;
-        _eofToken = new Token(TokenKind.EndOfFile, sourceCode.Length, sourceCode.Length);
+        _eofToken = new Token(TokenKind.EndOfFile, new SourceSpan(sourceCode.Length, sourceCode.Length));
     }
 
     public Token NextToken()
@@ -70,7 +72,7 @@ internal class Lexer
         return NewToken(TokenKind.Integer);
     }
 
-    private Token NewToken(TokenKind kind) => new(kind, _startPosition, _currentPosition);
+    private Token NewToken(TokenKind kind) => new(kind, new SourceSpan(_startPosition, _currentPosition));
 
     private bool IsAtEnd() => _currentPosition >= _sourceCode.Length;
 
