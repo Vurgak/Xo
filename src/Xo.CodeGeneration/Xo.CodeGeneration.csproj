@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Xo.Ast\Xo.Ast.csproj" />
+      <ProjectReference Include="..\Xo.Tcc\Xo.Tcc.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\GeneratedCodeEpilogue.txt" />
+      <EmbeddedResource Include="Resources\GeneratedCodeEpilogue.c" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\GeneratedCodePrologue.c" />
+      <EmbeddedResource Include="Resources\GeneratedCodePrologue.c" />
+    </ItemGroup>
+
+</Project>

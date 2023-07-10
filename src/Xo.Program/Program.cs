@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System.Diagnostics;using System.Runtime.InteropServices;
+using Xo.CodeGeneration;
 using Xo.Parsing;
+using Xo.SourceCode;
 
 const string version = "0.1.0-dev";
 Console.WriteLine($"xo {version}");
@@ -10,15 +12,16 @@ stopwatch.Start();
 var sourceFilePath = args[0];
 Console.WriteLine(sourceFilePath);
 
-var sourceCode = ReadSourceFile(sourceFilePath);
+var sourceFile = SourceFile.ReadFromDisk(sourceFilePath);
 
-var tokens = new TokenStream(sourceCode);
+var tokens = new TokenStream(sourceFile.SourceCode);
 
 var ast = Parser.Parse(tokens);
 
+var outputFileName = GetDefaultOutputFileName();
+CodeGenerator.GenerateExecutable(outputFileName, ast, sourceFile);
+
 Console.WriteLine($"Compilation finished in {stopwatch.Elapsed.TotalSeconds}s");
 
-// Automatically converts CRLF line endings to LF (for sanity).
-static string ReadSourceFile(string filePath) =>
-    File.ReadAllText(filePath)
-        .Replace("\r\n", "\n");
+static string GetDefaultOutputFileName() =>
+    RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "program.exe" : "program";
