@@ -4,8 +4,8 @@ namespace Xo.Ast.Expressions;
 
 public class BinaryOperation : IExpression
 {
-    public SourceSpan Span { get; set; }
-    public IExpression LeftOperand { get; set; }
-    public IExpression RightOperand { get; set; }
-    public Spanned<BinaryOperatorKind> Operator { get; set; }
+    public required SourceSpan Span { get; init; }
+    public required IExpression LeftOperand { get; init; }
+    public required IExpression RightOperand { get; init; }
+    public required Spanned<BinaryOperatorKind> Operator { get; init; }
 }

@@ -9,12 +9,19 @@ public class SourceFile
         SourceCode = sourceCode;
     }
 
-    public static SourceFile ReadFromDisk(string filePath)
+    public static SourceFile? ReadFromDisk(string filePath)
     {
-        var sourceCode = File.ReadAllText(filePath)
-            .Replace("\r\n", "\n");
+        try
+        {
+            var sourceCode = File.ReadAllText(filePath)
+                .Replace("\r\n", "\n");
 
-        return new SourceFile(sourceCode);
+            return new SourceFile(sourceCode);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public ReadOnlySpan<char> ReadSpan(SourceSpan span) => SourceCode.AsSpan(span.Start, span.Length);

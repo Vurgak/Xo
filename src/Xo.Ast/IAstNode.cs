@@ -4,5 +4,5 @@ namespace Xo.Ast;
 
 public interface IAstNode
 {
-    public SourceSpan Span { get; set; }
+    public SourceSpan Span { get; init; }
 }

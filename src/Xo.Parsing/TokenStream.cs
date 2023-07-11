@@ -1,4 +1,7 @@
-﻿namespace Xo.Parsing;
+﻿using Xo.Session;
+using Xo.SourceCode;
+
+namespace Xo.Parsing;
 
 public class TokenStream
 {
@@ -9,9 +12,9 @@ public class TokenStream
     /// </summary>
     private Token? _tokenCache;
 
-    public TokenStream(string sourceCode)
+    public TokenStream(CompilationSession session)
     {
-        _lexer = new Lexer(sourceCode);
+        _lexer = new Lexer(session);
     }
 
     public bool IsAtEnd()

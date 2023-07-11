@@ -2,6 +2,7 @@
 using System.Text;
 using Xo.Ast;
 using Xo.Ast.Expressions;
+using Xo.Session;
 using Xo.SourceCode;
 using Xo.Tcc;
 
@@ -10,18 +11,18 @@ namespace Xo.CodeGeneration;
 public class CodeGenerator
 {
     private readonly IAstNode _program;
-    private readonly SourceFile _sourceFile;
+    private readonly CompilationSession _session;
     private readonly StringBuilder _generatedCode = new();
 
-    private CodeGenerator(IAstNode program, SourceFile sourceFile)
+    private CodeGenerator(IAstNode program, CompilationSession session)
     {
         _program = program;
-        _sourceFile = sourceFile;
+        _session = session;
     }
 
-    public static void GenerateExecutable(string outputFilePath, IAstNode program, SourceFile sourceFile)
+    public static void GenerateExecutable(string outputFilePath, IAstNode program, CompilationSession session)
     {
-        var generator = new CodeGenerator(program, sourceFile);
+        var generator = new CodeGenerator(program, session);
         generator.GenerateExecutable(outputFilePath);
     }
 
@@ -111,6 +112,6 @@ public class CodeGenerator
 
     private void GenerateLiteral(Literal literal)
     {
-        _generatedCode.Append(_sourceFile.ReadSpan(literal.Span));
+        _generatedCode.Append(_session.SymbolCollection.Get(literal.Symbol));
     }
 }

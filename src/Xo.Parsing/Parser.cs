@@ -1,5 +1,6 @@
 ﻿using Xo.Ast;
 using Xo.Ast.Expressions;
+using Xo.Session;
 using Xo.SourceCode;
 
 namespace Xo.Parsing;
@@ -7,15 +8,17 @@ namespace Xo.Parsing;
 public class Parser
 {
     private readonly TokenStream _tokens;
+    private readonly CompilationSession _session;
 
-    private Parser(TokenStream tokens)
+    private Parser(TokenStream tokens, CompilationSession session)
     {
         _tokens = tokens;
+        _session = session;
     }
 
-    public static IAstNode Parse(TokenStream tokens)
+    public static IAstNode Parse(TokenStream tokens, CompilationSession session)
     {
-        var parser = new Parser(tokens);
+        var parser = new Parser(tokens, session);
         return parser.Parse();
     }
 
@@ -89,7 +92,11 @@ public class Parser
     private IExpression ParseLiteral()
     {
         if (_tokens.Consume(TokenKind.Integer, out var integer))
-            return new Literal(integer.Span, LiteralKind.Integer);
+        {
+            var lexeme = _session.SourceFile.ReadSpan(integer.Span);
+            var symbol = _session.SymbolCollection.Add(lexeme.ToString());
+            return new Literal(integer.Span, LiteralKind.Integer, symbol);
+        }
 
         throw new Exception($"{_tokens.Peek().Span.Start}: expected an expression");
     }

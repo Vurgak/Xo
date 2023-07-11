@@ -1,3 +1,5 @@
+using Xo.Session;
+
 namespace Xo.Parsing.UnitTests;
 
 public class LexerTests
