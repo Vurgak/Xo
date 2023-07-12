@@ -2,6 +2,8 @@
 
 public enum TokenKind
 {
+    NewLine,
+
     Integer,
 
     Plus,
@@ -10,5 +12,5 @@ public enum TokenKind
     Slash,
 
     Invalid,
-    EndOfFile,
+    EndOfFile
 }

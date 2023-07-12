@@ -1,26 +1,25 @@
 ﻿using System.Reflection;
 using System.Text;
-using Xo.Ast;
 using Xo.Ast.Expressions;
+using Xo.Ast.Statements;
 using Xo.Session;
-using Xo.SourceCode;
 using Xo.Tcc;
 
 namespace Xo.CodeGeneration;
 
 public class CodeGenerator
 {
-    private readonly IAstNode _program;
+    private readonly IEnumerable<IStatement> _program;
     private readonly CompilationSession _session;
     private readonly StringBuilder _generatedCode = new();
 
-    private CodeGenerator(IAstNode program, CompilationSession session)
+    private CodeGenerator(IEnumerable<IStatement> program, CompilationSession session)
     {
         _program = program;
         _session = session;
     }
 
-    public static void GenerateExecutable(string outputFilePath, IAstNode program, CompilationSession session)
+    public static void GenerateExecutable(string outputFilePath, IEnumerable<IStatement> program, CompilationSession session)
     {
         var generator = new CodeGenerator(program, session);
         generator.GenerateExecutable(outputFilePath);
@@ -50,11 +49,29 @@ public class CodeGenerator
         var prologue = ReadEmbeddedResource("Resources.GeneratedCodePrologue.c");
         _generatedCode.Append(prologue);
 
-        GenerateExpression((IExpression)_program);
-        _generatedCode.Append(";\n");
+        foreach (var statement in _program)
+            GenerateStatement(statement);
 
         var epilogue = ReadEmbeddedResource("Resources.GeneratedCodeEpilogue.c");
         _generatedCode.Append(epilogue);
+    }
+
+    private void GenerateStatement(IStatement statement)
+    {
+        switch (statement)
+        {
+            case ExpressionStatement expressionStatement:
+                _generatedCode.Append("printf(\"");
+                GenerateExpression(expressionStatement.Expression);
+                _generatedCode.Append("\n\")");
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(statement), statement,
+                    $"{nameof(GenerateStatement)} is not implemented for statement of type ${statement.GetType().Name}");
+        }
+
+        _generatedCode.Append(";\n");
     }
 
     private void GenerateExpression(IExpression expression)

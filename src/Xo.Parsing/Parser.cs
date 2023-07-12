@@ -1,5 +1,5 @@
-﻿using Xo.Ast;
-using Xo.Ast.Expressions;
+﻿using Xo.Ast.Expressions;
+using Xo.Ast.Statements;
 using Xo.Session;
 using Xo.SourceCode;
 
@@ -16,15 +16,33 @@ public class Parser
         _session = session;
     }
 
-    public static IAstNode Parse(TokenStream tokens, CompilationSession session)
+    public static IEnumerable<IStatement> Parse(TokenStream tokens, CompilationSession session)
     {
         var parser = new Parser(tokens, session);
         return parser.Parse();
     }
 
-    private IAstNode Parse()
+    private IEnumerable<IStatement> Parse()
     {
-        return ParseExpression();
+        var statements = new List<IStatement>();
+        while (!_tokens.IsAtEnd())
+            statements.Add(ParseStatement());
+
+        return statements;
+    }
+
+    private IStatement ParseStatement()
+    {
+        var expression = ParseExpression();
+
+        if (!_tokens.Consume(TokenKind.NewLine, out _))
+            throw new Exception($"{_tokens.Peek().Span.Start}: expected a statement end");
+
+        return new ExpressionStatement
+        {
+            Span = expression.Span,
+            Expression = expression,
+        };
     }
 
     private IExpression ParseExpression()

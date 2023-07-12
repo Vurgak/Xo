@@ -57,17 +57,26 @@ internal class Lexer
 
     private Token? ScanWhiteSpaceToken()
     {
-        SkipWhiteSpaceChars();
-        if (IsAtEnd())
-            return _eofToken;
+        SkipInsignificantWhiteSpaceChars();
+        while (!IsAtEnd() && PeekChar() == '\n')
+        {
+            NextChar();
+            _startPosition = _currentPosition;
+
+            SkipInsignificantWhiteSpaceChars();
+            if (!IsAtEnd() && PeekChar() == '\n')
+                continue;
+
+            return NewToken(TokenKind.NewLine);
+        }
 
         _startPosition = _currentPosition;
         return null;
     }
 
-    private void SkipWhiteSpaceChars()
+    private void SkipInsignificantWhiteSpaceChars()
     {
-        while (!IsAtEnd() && IsWhiteSpace(PeekChar()))
+        while (!IsAtEnd() && IsInsignificantWhiteSpace(PeekChar()))
             NextChar();
     }
 
@@ -88,6 +97,8 @@ internal class Lexer
     private char NextChar() => _sourceCode[_currentPosition++];
 
     private static bool IsWhiteSpace(char c) => char.IsWhiteSpace(c);
+
+    private static bool IsInsignificantWhiteSpace(char c) => char.IsWhiteSpace(c) && c != '\n';
 
     private static bool IsNumberStart(char c) => char.IsAsciiDigit(c);
 

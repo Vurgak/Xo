@@ -1,1 +1,3 @@
-﻿int main() {
+﻿int printf(const char *format, ...);
+
+int main() {
