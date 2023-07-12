@@ -2,11 +2,23 @@
 
 public class SourceFile
 {
+    public string Path { get; }
+
     public string SourceCode { get; }
 
-    private SourceFile(string sourceCode)
+    private List<int> _lineStarts = new();
+
+    private SourceFile(string path, string sourceCode)
     {
+        Path = path;
         SourceCode = sourceCode;
+
+        _lineStarts = new List<int> { 0 };
+        for (var i = 0; i < sourceCode.Length; ++i)
+        {
+            if (sourceCode[i] == '\n')
+                _lineStarts.Add(i + 1);
+        }
     }
 
     public static SourceFile? ReadFromDisk(string filePath)
@@ -16,7 +28,7 @@ public class SourceFile
             var sourceCode = File.ReadAllText(filePath)
                 .Replace("\r\n", "\n");
 
-            return new SourceFile(sourceCode);
+            return new SourceFile(filePath, sourceCode);
         }
         catch
         {
@@ -25,4 +37,11 @@ public class SourceFile
     }
 
     public ReadOnlySpan<char> ReadSpan(SourceSpan span) => SourceCode.AsSpan(span.Start, span.Length);
+
+    public int GetLineNumber(int position)
+    {
+        return _lineStarts.FindIndex(lineStart => position >= lineStart) + 1;
+    }
+
+    public SourceSpan GetLineSpan(int lineNumber) => new(_lineStarts[lineNumber - 1], _lineStarts[lineNumber]);
 }
