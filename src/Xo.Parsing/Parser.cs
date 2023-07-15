@@ -26,9 +26,25 @@ public class Parser
     {
         var statements = new List<IStatement>();
         while (!_tokens.IsAtEnd())
-            statements.Add(ParseStatement());
+        {
+            try
+            {
+                statements.Add(ParseStatement());
+            }
+            catch (ParserErrorException exception)
+            {
+                _session.Diagnostics.EmitError(exception.Span, exception.Message);
+                Synchronize();
+            }
+        }
 
         return statements;
+    }
+
+    private void Synchronize()
+    {
+        while (!_tokens.IsAtEnd() && !_tokens.Consume(TokenKind.NewLine, out _))
+            _tokens.Advance();
     }
 
     private IStatement ParseStatement()
@@ -36,7 +52,10 @@ public class Parser
         var expression = ParseExpression();
 
         if (!_tokens.Consume(TokenKind.NewLine, out _))
-            throw new Exception($"{_tokens.Peek().Span.Start}: expected a statement end");
+        {
+            var currentToken = _tokens.Peek();
+            throw new ParserErrorException(currentToken.Span, "expected an operator or statement finisher");
+        }
 
         return new ExpressionStatement
         {
@@ -95,14 +114,13 @@ public class Parser
         return expression;
     }
 
-    private static Spanned<BinaryOperatorKind> MapTokenToBinaryOperator(Token operatorToken) => operatorToken.Kind switch
+    private Spanned<BinaryOperatorKind> MapTokenToBinaryOperator(Token operatorToken) => operatorToken.Kind switch
     {
         TokenKind.Plus => new Spanned<BinaryOperatorKind>(operatorToken.Span, BinaryOperatorKind.Add),
         TokenKind.Minus => new Spanned<BinaryOperatorKind>(operatorToken.Span, BinaryOperatorKind.Subtract),
         TokenKind.Asterisk => new Spanned<BinaryOperatorKind>(operatorToken.Span, BinaryOperatorKind.Multiply),
         TokenKind.Slash => new Spanned<BinaryOperatorKind>(operatorToken.Span, BinaryOperatorKind.Divide),
-        _ => throw new ArgumentOutOfRangeException(nameof(operatorToken), operatorToken,
-            "Token is not a valid binary operator")
+        _ => throw new ParserErrorException(operatorToken.Span, "expected a binary operator")
     };
 
     #endregion
@@ -116,6 +134,7 @@ public class Parser
             return new Literal(integer.Span, LiteralKind.Integer, symbol);
         }
 
-        throw new Exception($"{_tokens.Peek().Span.Start}: expected an expression");
+        var currentToken = _tokens.Peek();
+        throw new ParserErrorException(currentToken.Span, "expected an expression");
     }
 }

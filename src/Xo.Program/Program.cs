@@ -22,8 +22,6 @@ if (sourceFile is null)
 }
 
 var session = new CompilationSession(sourceFile);
-session.Diagnostics.EmitError(new SourceSpan(0, 5), "test error");
-
 var tokens = new TokenStream(session);
 var ast = Parser.Parse(tokens, session);
 var outputFileName = GetDefaultOutputFileName();

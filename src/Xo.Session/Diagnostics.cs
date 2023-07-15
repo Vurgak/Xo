@@ -22,10 +22,11 @@ public class Diagnostics
         var lineNumber = _sourceFile.GetLineNumber(span.Start);
         var lineSpan = _sourceFile.GetLineSpan(lineNumber);
         var line = _sourceFile.ReadSpan(lineSpan);
+        var column = span.Start - lineSpan.Start + 1;
 
         AnsiConsole.WriteLine();
         AnsiConsole.MarkupLine($"[red bold]error:[/] {message}");
-        AnsiConsole.MarkupLine($"  -> {_sourceFile.Path}:{lineNumber}");
+        AnsiConsole.MarkupLine($"  -> {_sourceFile.Path}:{lineNumber}:{column}");
         AnsiConsole.MarkupLine($"{lineNumber} | {line}");
     }
 }
