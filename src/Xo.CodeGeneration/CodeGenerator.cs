@@ -60,10 +60,12 @@ public class CodeGenerator
     {
         switch (statement)
         {
-            case ExpressionStatement expressionStatement:
-                _generatedCode.Append("printf(\"");
-                GenerateExpression(expressionStatement.Expression);
-                _generatedCode.Append("\n\")");
+            case LocalVariableStatement localVariable:
+                GenerateLocalVariableStatement(localVariable);
+                break;
+
+            case ExpressionStatement expression:
+                GenerateExpression(expression.Expression);
                 break;
 
             default:
@@ -72,6 +74,14 @@ public class CodeGenerator
         }
 
         _generatedCode.Append(";\n");
+    }
+
+    private void GenerateLocalVariableStatement(LocalVariableStatement localVariable)
+    {
+        _generatedCode.Append("int ")
+            .Append(_session.SymbolCollection.Get(localVariable.Identifier.Symbol))
+            .Append(" = ");
+        GenerateExpression(localVariable.Initializer);
     }
 
     private void GenerateExpression(IExpression expression)

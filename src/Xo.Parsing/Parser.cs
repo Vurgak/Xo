@@ -10,6 +10,12 @@ public class Parser
     private readonly TokenStream _tokens;
     private readonly CompilationSession _session;
 
+    private readonly IEnumerable<TokenKind> _literalTokenKinds = new[]
+    {
+        TokenKind.Identifier,
+        TokenKind.Integer,
+    };
+
     private Parser(TokenStream tokens, CompilationSession session)
     {
         _tokens = tokens;
@@ -24,12 +30,22 @@ public class Parser
 
     private IEnumerable<IStatement> Parse()
     {
+        return ParseBlock();
+    }
+
+    private List<IStatement> ParseBlock()
+    {
         var statements = new List<IStatement>();
         while (!_tokens.IsAtEnd())
         {
             try
             {
                 statements.Add(ParseStatement());
+                if (_tokens.Consume(TokenKind.NewLine, out _))
+                    continue;
+
+                var currentToken = _tokens.Peek();
+                throw new ParserErrorException(currentToken.Span, "expected an operator or statement finisher");
             }
             catch (ParserErrorException exception)
             {
@@ -49,14 +65,36 @@ public class Parser
 
     private IStatement ParseStatement()
     {
-        var expression = ParseExpression();
+        if (_tokens.Consume(TokenKind.Let, out var letToken))
+            return ParseLocalVariableStatement(letToken);
 
-        if (!_tokens.Consume(TokenKind.NewLine, out _))
+        return ParseExpressionStatement();
+    }
+
+    private IStatement ParseLocalVariableStatement(Token keywordToken)
+    {
+        var identifier = ParseIdentifier();
+
+        if (!_tokens.Consume(TokenKind.Equals, out _))
         {
             var currentToken = _tokens.Peek();
-            throw new ParserErrorException(currentToken.Span, "expected an operator or statement finisher");
+            throw new ParserErrorException(currentToken.Span, "expected `='");
         }
 
+        var initializer = ParseExpression();
+
+        var span = new SourceSpan(keywordToken.Span.Start, initializer.Span.End);
+        return new LocalVariableStatement
+        {
+            Span = span,
+            Identifier = identifier,
+            Initializer = initializer
+        };
+    }
+
+    private IStatement ParseExpressionStatement()
+    {
+        var expression = ParseExpression();
         return new ExpressionStatement
         {
             Span = expression.Span,
@@ -114,7 +152,7 @@ public class Parser
         return expression;
     }
 
-    private Spanned<BinaryOperatorKind> MapTokenToBinaryOperator(Token operatorToken) => operatorToken.Kind switch
+    private static Spanned<BinaryOperatorKind> MapTokenToBinaryOperator(Token operatorToken) => operatorToken.Kind switch
     {
         TokenKind.Plus => new Spanned<BinaryOperatorKind>(operatorToken.Span, BinaryOperatorKind.Add),
         TokenKind.Minus => new Spanned<BinaryOperatorKind>(operatorToken.Span, BinaryOperatorKind.Subtract),
@@ -125,16 +163,45 @@ public class Parser
 
     #endregion
 
+    private Identifier ParseIdentifier()
+    {
+        if (_tokens.Consume(TokenKind.Identifier, out var token))
+        {
+            var symbol = AddSymbol(token);
+            return new Identifier(token.Span, symbol);
+        }
+
+        var currentToken = _tokens.Peek();
+        throw new ParserErrorException(currentToken.Span, "expected an identifier");
+    }
+
     private IExpression ParseLiteral()
     {
-        if (_tokens.Consume(TokenKind.Integer, out var integer))
-        {
-            var lexeme = _session.SourceFile.ReadSpan(integer.Span);
-            var symbol = _session.SymbolCollection.Add(lexeme.ToString());
-            return new Literal(integer.Span, LiteralKind.Integer, symbol);
-        }
+        if (_tokens.Consume(_literalTokenKinds, out var literal))
+            return NewLiteral(literal);
 
         var currentToken = _tokens.Peek();
         throw new ParserErrorException(currentToken.Span, "expected an expression");
     }
+
+    private IExpression NewLiteral(Token literal)
+    {
+        var symbol = AddSymbol(literal);
+        var literalKind = MapTokenKindToLiteralKind(literal.Kind);
+        return new Literal(literal.Span, literalKind, symbol);
+    }
+
+    private Symbol AddSymbol(Token literal)
+    {
+        var lexeme = _session.SourceFile.ReadSpan(literal.Span);
+        var symbol = _session.SymbolCollection.Add(lexeme.ToString());
+        return symbol;
+    }
+
+    private static LiteralKind MapTokenKindToLiteralKind(TokenKind kind) => kind switch
+    {
+        TokenKind.Identifier => LiteralKind.Identifier,
+        TokenKind.Integer => LiteralKind.Integer,
+        _ => throw new ArgumentOutOfRangeException(nameof(kind))
+    };
 }

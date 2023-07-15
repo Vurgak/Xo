@@ -65,7 +65,7 @@ public class TokenStream
     public bool Consume(IEnumerable<TokenKind> expectedKinds, out Token token)
     {
         var nextToken = Peek();
-        if (nextToken.Kind != TokenKind.EndOfFile && expectedKinds.Contains(nextToken.Kind))
+        if (expectedKinds.Contains(nextToken.Kind) && nextToken.Kind != TokenKind.EndOfFile)
         {
             token = nextToken;
             _tokenCache = null;

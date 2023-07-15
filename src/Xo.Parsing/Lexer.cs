@@ -1,4 +1,5 @@
-﻿using Xo.Session;
+﻿using System.Collections.ObjectModel;
+using Xo.Session;
 using Xo.SourceCode;
 
 namespace Xo.Parsing;
@@ -11,10 +12,13 @@ internal class Lexer
     private int _startPosition;
     private int _currentPosition;
 
-    public Lexer(CompilationSession session)
+    private static readonly ReadOnlyDictionary<string, TokenKind> _keywordKinds = new Dictionary<string, TokenKind>
     {
-        _sourceCode = session.SourceFile.SourceCode;
-        _eofToken = new Token(TokenKind.EndOfFile, new SourceSpan(_sourceCode.Length, _sourceCode.Length));
+        { "let", TokenKind.Let}
+    }.AsReadOnly();
+
+    public Lexer(CompilationSession session) : this(session.SourceFile.SourceCode)
+    {
     }
 
     internal Lexer(string sourceCode)
@@ -44,6 +48,9 @@ internal class Lexer
         if (IsNumberStart(firstChar))
             return ScanNumberToken();
 
+        if (IsIdentifierStart(firstChar))
+            return ScanIdentifierOrKeywordToken();
+
         NextChar();
         return firstChar switch
         {
@@ -51,6 +58,7 @@ internal class Lexer
             '-' => NewToken(TokenKind.Minus),
             '*' => NewToken(TokenKind.Asterisk),
             '/' => NewToken(TokenKind.Slash),
+            '=' => NewToken(TokenKind.Equals),
             _ => NewToken(TokenKind.Invalid)
         };
     }
@@ -88,6 +96,17 @@ internal class Lexer
         return NewToken(TokenKind.Integer);
     }
 
+    private Token ScanIdentifierOrKeywordToken()
+    {
+        while (!IsAtEnd() && IsIdentifierContinuation(PeekChar()))
+            NextChar();
+
+        var lexemeLength = _currentPosition - _startPosition;
+        var lexeme = _sourceCode.Substring(_startPosition, lexemeLength);
+        var tokenKind = _keywordKinds.GetValueOrDefault(lexeme, TokenKind.Identifier);
+        return NewToken(tokenKind);
+    }
+
     private Token NewToken(TokenKind kind) => new(kind, new SourceSpan(_startPosition, _currentPosition));
 
     private bool IsAtEnd() => _currentPosition >= _sourceCode.Length;
@@ -103,4 +122,8 @@ internal class Lexer
     private static bool IsNumberStart(char c) => char.IsAsciiDigit(c);
 
     private static bool IsNumberContinuation(char c) => char.IsAsciiDigit(c) || c == '.';
+
+    private static bool IsIdentifierStart(char c) => char.IsLetter(c) || c == '_';
+
+    private static bool IsIdentifierContinuation(char c) => IsIdentifierStart(c) || char.IsDigit(c);
 }

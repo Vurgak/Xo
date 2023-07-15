@@ -34,6 +34,34 @@ public class LexerTests
     }
 
     [Theory]
+    [InlineData("asdf")]
+    [InlineData("asdf12")]
+    [InlineData("as23w")]
+    [InlineData("_asdf")]
+    [InlineData("as_df")]
+    [InlineData("asdf_")]
+    [InlineData("_asdf1")]
+    public void ScanToken_ShouldTokenizeIdentifierToken(string sourceCode)
+    {
+        var lexer = new Lexer(sourceCode);
+
+        var actualToken = lexer.NextToken();
+
+        Assert.Equal(TokenKind.Identifier, actualToken.Kind);
+    }
+
+    [Theory]
+    [InlineData("let", TokenKind.Let)]
+    public void ScanToken_ShouldTokenizeKeywordToken(string sourceCode, TokenKind expectedTokenKind)
+    {
+        var lexer = new Lexer(sourceCode);
+
+        var actualToken = lexer.NextToken();
+
+        Assert.Equal(expectedTokenKind, actualToken.Kind);
+    }
+
+    [Theory]
     [InlineData("+", TokenKind.Plus)]
     [InlineData("-", TokenKind.Minus)]
     [InlineData("*", TokenKind.Asterisk)]

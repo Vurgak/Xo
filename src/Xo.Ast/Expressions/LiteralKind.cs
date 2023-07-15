@@ -2,5 +2,6 @@
 
 public enum LiteralKind
 {
+    Identifier,
     Integer
 }
