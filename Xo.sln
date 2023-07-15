@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xo.Tcc", "src\Xo.Tcc\Xo.Tcc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xo.Session", "src\Xo.Session\Xo.Session.csproj", "{B553B7B0-D3F5-4B65-AAA6-627877266C55}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xo.SourceCode.UnitTests", "tests\Xo.SourceCode.UnitTests\Xo.SourceCode.UnitTests.csproj", "{91322B9C-4D18-4B08-8DC7-456BDDF57BB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,7 @@ Global
 		{195D8C0B-E772-4848-8F1C-2771461396CF} = {1CB5EB77-AA9F-43B5-950A-DD50BCBAEFB7}
 		{BEBCF702-10D8-4DED-A7F4-91F2DDCE3F07} = {1CB5EB77-AA9F-43B5-950A-DD50BCBAEFB7}
 		{B553B7B0-D3F5-4B65-AAA6-627877266C55} = {1CB5EB77-AA9F-43B5-950A-DD50BCBAEFB7}
+		{91322B9C-4D18-4B08-8DC7-456BDDF57BB6} = {EC30B9ED-938F-477C-8E5F-12AC705182F9}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5A9680D5-9BA9-472D-8D25-64053230C1F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -79,5 +82,9 @@ Global
 		{B553B7B0-D3F5-4B65-AAA6-627877266C55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B553B7B0-D3F5-4B65-AAA6-627877266C55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B553B7B0-D3F5-4B65-AAA6-627877266C55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91322B9C-4D18-4B08-8DC7-456BDDF57BB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91322B9C-4D18-4B08-8DC7-456BDDF57BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91322B9C-4D18-4B08-8DC7-456BDDF57BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91322B9C-4D18-4B08-8DC7-456BDDF57BB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

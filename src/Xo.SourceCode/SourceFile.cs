@@ -2,13 +2,13 @@
 
 public class SourceFile
 {
-    public string Path { get; }
+    public string? Path { get; }
 
     public string SourceCode { get; }
 
-    private List<int> _lineStarts = new();
+    private readonly List<int> _lineStarts;
 
-    private SourceFile(string path, string sourceCode)
+    private SourceFile(string? path, string sourceCode)
     {
         Path = path;
         SourceCode = sourceCode;
@@ -34,12 +34,14 @@ public class SourceFile
         }
     }
 
-    public ReadOnlySpan<char> ReadSpan(SourceSpan span) => SourceCode.AsSpan(span.Start, span.Length);
-
-    public int GetLineNumber(int position)
+    public static SourceFile ReadFromString(string sourceCode)
     {
-        return _lineStarts.FindIndex(lineStart => position >= lineStart) + 1;
+        return new SourceFile(null, sourceCode);
     }
 
-    public SourceSpan GetLineSpan(int lineNumber) => new(_lineStarts[lineNumber - 1], _lineStarts[lineNumber]);
+    public ReadOnlySpan<char> ReadSpan(SourceSpan span) => SourceCode.AsSpan(span.Start, span.Length);
+
+    public int GetLineNumber(int position) =>_lineStarts.FindIndex(lineStart => position < lineStart);
+
+    public SourceSpan ReadLineSpan(int lineNumber) => new(_lineStarts[lineNumber - 1], _lineStarts[lineNumber]);
 }

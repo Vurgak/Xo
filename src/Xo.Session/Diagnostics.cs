@@ -20,7 +20,7 @@ public class Diagnostics
     {
         ErrorCount++;
         var lineNumber = _sourceFile.GetLineNumber(span.Start);
-        var lineSpan = _sourceFile.GetLineSpan(lineNumber);
+        var lineSpan = _sourceFile.ReadLineSpan(lineNumber);
         var line = _sourceFile.ReadSpan(lineSpan);
         var column = span.Start - lineSpan.Start + 1;
 
