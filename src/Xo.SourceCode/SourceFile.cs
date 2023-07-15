@@ -25,9 +25,7 @@ public class SourceFile
     {
         try
         {
-            var sourceCode = File.ReadAllText(filePath)
-                .Replace("\r\n", "\n");
-
+            var sourceCode = File.ReadAllText(filePath);
             return new SourceFile(filePath, sourceCode);
         }
         catch
