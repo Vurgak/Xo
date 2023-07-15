@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.JavaScript;
 using Xo.CodeGeneration;
 using Xo.Parsing;
 using Xo.Session;
@@ -13,7 +14,6 @@ var stopwatch = new Stopwatch();
 stopwatch.Start();
 
 var sourceFilePath = args[0];
-Console.WriteLine(sourceFilePath);
 
 var sourceFile = SourceFile.ReadFromDisk(sourceFilePath);
 if (sourceFile is null)
@@ -49,12 +49,11 @@ static string GetVersion()
 
 static void TerminateCompilation(Stopwatch compilationStopwatch, int errorCount)
 {
+    Console.WriteLine();
     Console.WriteLine($"Compilation finished in {compilationStopwatch.Elapsed.TotalSeconds}s");
-    if (errorCount > 0)
-    {
-        var errorsS = errorCount == 1 ? "" : "s";
-        Console.WriteLine($"  with {errorCount} error{errorsS}");
-    }
+
+    var errorsS = errorCount == 1 ? "" : "s";
+    Console.WriteLine($"  with {errorCount} error{errorsS}");
 
     Environment.Exit(1);
 }
