@@ -64,6 +64,10 @@ public class CodeGenerator
                 GenerateLocalVariableStatement(localVariable);
                 break;
 
+            case PrintStatement print:
+                GeneratePrintStatement(print);
+                break;
+
             case ExpressionStatement expression:
                 GenerateExpression(expression.Expression);
                 break;
@@ -82,6 +86,13 @@ public class CodeGenerator
             .Append(_session.SymbolCollection.Get(localVariable.Identifier.Symbol))
             .Append(" = ");
         GenerateExpression(localVariable.Initializer);
+    }
+
+    private void GeneratePrintStatement(PrintStatement print)
+    {
+        _generatedCode.Append("printf(\"%d\n\", ");
+        GenerateExpression(print.Expression);
+        _generatedCode.Append(')');
     }
 
     private void GenerateExpression(IExpression expression)

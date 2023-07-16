@@ -14,7 +14,8 @@ internal class Lexer
 
     private static readonly ReadOnlyDictionary<string, TokenKind> _keywordKinds = new Dictionary<string, TokenKind>
     {
-        { "let", TokenKind.Let}
+        { "let", TokenKind.Let},
+        { "print", TokenKind.Print}
     }.AsReadOnly();
 
     public Lexer(CompilationSession session) : this(session.SourceFile.SourceCode)

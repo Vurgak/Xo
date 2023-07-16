@@ -52,6 +52,7 @@ public class LexerTests
 
     [Theory]
     [InlineData("let", TokenKind.Let)]
+    [InlineData("print", TokenKind.Print)]
     public void ScanToken_ShouldTokenizeKeywordToken(string sourceCode, TokenKind expectedTokenKind)
     {
         var lexer = new Lexer(sourceCode);

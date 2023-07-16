@@ -68,6 +68,9 @@ public class Parser
         if (_tokens.Consume(TokenKind.Let, out var letToken))
             return ParseLocalVariableStatement(letToken);
 
+        if (_tokens.Consume(TokenKind.Print, out var printToken))
+            return ParsePrintStatement(printToken);
+
         return ParseExpressionStatement();
     }
 
@@ -90,6 +93,13 @@ public class Parser
             Identifier = identifier,
             Initializer = initializer
         };
+    }
+
+    private IStatement ParsePrintStatement(Token printToken)
+    {
+        var expression = ParseExpression();
+        var span = new SourceSpan(printToken.Span.Start, expression.Span.End);
+        return new PrintStatement(span, expression);
     }
 
     private IStatement ParseExpressionStatement()

@@ -8,6 +8,7 @@ public enum TokenKind
     Integer,
 
     Let,
+    Print,
 
     Plus,
     Minus,
