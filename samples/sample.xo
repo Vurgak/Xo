@@ -1,0 +1,4 @@
+﻿print 2 + 3 * 4
+
+let x = 42
+print x / 2

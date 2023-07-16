@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.JavaScript;
+using Xo.AstAnalysis;
 using Xo.CodeGeneration;
 using Xo.Parsing;
 using Xo.Session;
@@ -30,13 +30,20 @@ if (session.Diagnostics.ErrorCount > 0)
 
 var parsingTime = stopwatch.Elapsed.TotalSeconds;
 
+AstAnalyzer.Analyze(ast, session);
+if (session.Diagnostics.ErrorCount > 0)
+    TerminateCompilation(stopwatch, session.Diagnostics.ErrorCount);
+
+var semanticAnalysisTime = stopwatch.Elapsed.TotalSeconds - parsingTime;
+
 var outputFileName = GetDefaultOutputFileName();
 CodeGenerator.GenerateExecutable(outputFileName, ast, session);
 
-var codeGenerationTime = stopwatch.Elapsed.TotalSeconds - parsingTime;
+var codeGenerationTime = stopwatch.Elapsed.TotalSeconds - semanticAnalysisTime - parsingTime;
 
 Console.WriteLine($"Compilation finished in {stopwatch.Elapsed.TotalSeconds:0.0000000}s");
 Console.WriteLine($"  Parsing time: {parsingTime:0.0000000}s");
+Console.WriteLine($"  Semantic analysis time: {semanticAnalysisTime:0.0000000}s");
 Console.WriteLine($"  Code generation time: {codeGenerationTime:0.0000000}s");
 
 static string GetVersion()

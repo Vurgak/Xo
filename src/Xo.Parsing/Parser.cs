@@ -22,13 +22,13 @@ public class Parser
         _session = session;
     }
 
-    public static IEnumerable<IStatement> Parse(TokenStream tokens, CompilationSession session)
+    public static IReadOnlyList<IStatement> Parse(TokenStream tokens, CompilationSession session)
     {
         var parser = new Parser(tokens, session);
         return parser.Parse();
     }
 
-    private IEnumerable<IStatement> Parse()
+    private IReadOnlyList<IStatement> Parse()
     {
         return ParseBlock();
     }

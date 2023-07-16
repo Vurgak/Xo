@@ -16,6 +16,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{D5EF2EB3-229E-489F-BC24-79217D261DF0}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{FEC6E1CA-3EF7-49AC-99A8-6D975A9CB5B4}"
+	ProjectSection(SolutionItems) = preProject
+		samples\sample.xo = samples\sample.xo
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xo.Parsing", "src\Xo.Parsing\Xo.Parsing.csproj", "{09DD74C8-E7C9-4026-9090-134D0A851110}"
 EndProject
@@ -33,6 +36,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xo.Session", "src\Xo.Sessio
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xo.SourceCode.UnitTests", "tests\Xo.SourceCode.UnitTests\Xo.SourceCode.UnitTests.csproj", "{91322B9C-4D18-4B08-8DC7-456BDDF57BB6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xo.AstAnalysis", "src\Xo.AstAnalysis\Xo.AstAnalysis.csproj", "{D6BBBE32-A2C3-4DC0-8AC6-7916551B500B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +53,7 @@ Global
 		{BEBCF702-10D8-4DED-A7F4-91F2DDCE3F07} = {1CB5EB77-AA9F-43B5-950A-DD50BCBAEFB7}
 		{B553B7B0-D3F5-4B65-AAA6-627877266C55} = {1CB5EB77-AA9F-43B5-950A-DD50BCBAEFB7}
 		{91322B9C-4D18-4B08-8DC7-456BDDF57BB6} = {EC30B9ED-938F-477C-8E5F-12AC705182F9}
+		{D6BBBE32-A2C3-4DC0-8AC6-7916551B500B} = {1CB5EB77-AA9F-43B5-950A-DD50BCBAEFB7}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5A9680D5-9BA9-472D-8D25-64053230C1F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -86,5 +92,9 @@ Global
 		{91322B9C-4D18-4B08-8DC7-456BDDF57BB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91322B9C-4D18-4B08-8DC7-456BDDF57BB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91322B9C-4D18-4B08-8DC7-456BDDF57BB6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6BBBE32-A2C3-4DC0-8AC6-7916551B500B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6BBBE32-A2C3-4DC0-8AC6-7916551B500B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6BBBE32-A2C3-4DC0-8AC6-7916551B500B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6BBBE32-A2C3-4DC0-8AC6-7916551B500B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
