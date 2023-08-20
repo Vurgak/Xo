@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Net.WebSockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Xo.AstAnalysis;
@@ -24,22 +25,16 @@ if (sourceFile is null)
 
 var session = new CompilationSession(sourceFile);
 var tokens = new TokenStream(session);
-var ast = Parser.Parse(tokens, session);
+var (ast, parsingTime) = RunTimedTransformation(() => Parser.Parse(tokens, session));
 if (session.Diagnostics.ErrorCount > 0)
     TerminateCompilation(stopwatch, session.Diagnostics.ErrorCount);
 
-var parsingTime = stopwatch.Elapsed.TotalSeconds;
-
-AstAnalyzer.Analyze(ast, session);
+var semanticAnalysisTime = RunTimedCompilationPass(() => AstAnalyzer.Analyze(ast, session));
 if (session.Diagnostics.ErrorCount > 0)
     TerminateCompilation(stopwatch, session.Diagnostics.ErrorCount);
-
-var semanticAnalysisTime = stopwatch.Elapsed.TotalSeconds - parsingTime;
 
 var outputFileName = GetDefaultOutputFileName();
-CodeGenerator.GenerateExecutable(outputFileName, ast, session);
-
-var codeGenerationTime = stopwatch.Elapsed.TotalSeconds - semanticAnalysisTime - parsingTime;
+var codeGenerationTime = RunTimedCompilationPass(() => CodeGenerator.GenerateExecutable(outputFileName, ast, session));
 
 Console.WriteLine($"Compilation finished in {stopwatch.Elapsed.TotalSeconds:0.0000000}s");
 Console.WriteLine($"  Parsing time: {parsingTime:0.0000000}s");
@@ -67,3 +62,21 @@ static void TerminateCompilation(Stopwatch compilationStopwatch, int errorCount)
 
 static string GetDefaultOutputFileName() =>
     RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "program.exe" : "program";
+
+static double RunTimedCompilationPass(Action pass)
+{
+    var stopwatch = new Stopwatch();
+    stopwatch.Start();
+    pass();
+    var elapsed = stopwatch.Elapsed.TotalSeconds;
+    return elapsed;
+}
+
+static (TResult, double) RunTimedTransformation<TResult>(Func<TResult> pass)
+{
+    var stopwatch = new Stopwatch();
+    stopwatch.Start();
+    var result = pass();
+    var elapsed = stopwatch.Elapsed.TotalSeconds;
+    return (result, elapsed);
+}
